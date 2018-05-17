@@ -1,0 +1,163 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+var app = require('../app');
+var debug = require('debug')('gsd:server');
+var http = require('http');
+var https = require("https");
+var fs = require("fs");
+var sequelize = require("sequelize");
+
+var sequelizeCon = new sequelize('gsd', 'gsd_server', '*-&-GSD_2749', {
+    'dialect': 'mysql',
+    'host': "localhost",
+    "port": "3306",
+    'timezone': '+1:00'
+});
+
+var options = {
+    key: fs.readFileSync('ssl/privatekey.pem'),
+    cert: fs.readFileSync('ssl/certificate.pem'),
+    ca: fs.readFileSync('ssl/intermediateCertificate.pem')
+};
+/**
+ * Create HTTP server.
+ */
+
+var server = http.createServer(app).listen(80);
+var serverSSL = https.createServer(options, app).listen(443);
+
+server.addListener("request", function (req, res) {
+    if (controlUrl(req._parsedUrl.href)) {
+        onEveryRequest(req);
+    }
+});
+
+serverSSL.addListener("request", function (req, res) {
+    if (controlUrl(req._parsedUrl.href)) {
+        onEveryRequest(req);
+    }
+});
+
+function controlUrl(url) {
+    if (url.match(/\.css/) || url.match(/\.js/) || url.match(/\.jpg/) || url.match(/\.png/) || url.match(/\.gif/) || url.match(/images/) || url.match(/stylesheets/) || url.match(/\.ico/)) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+function onEveryRequest(req) {
+    if (req.cookies != null){
+        sequelizeCon.query('UPDATE user SET lastSeen = NOW() WHERE username = (SELECT username FROM usersession WHERE sessionID = "' + req.cookies.sessionID + '" GROUP BY username);', {type: sequelize.QueryTypes.UPDATE});
+    }
+}
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+//server.listen(port);
+serverSSL.on('error', onErrorSSL);
+server.on('error', onError);
+serverSSL.on('listening', onListeningSSL);
+server.on('listening', onListening);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+    var port = parseInt(val, 10);
+
+    if (isNaN(port)) {
+        // named pipe
+        return val;
+    }
+
+    if (port >= 0) {
+        // port number
+        return port;
+    }
+
+    return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onErrorSSL(error) {
+    var port = 443;
+    if (error.syscall !== 'listen') {
+        throw error;
+    }
+
+    var bind = typeof port === 'string' ?
+        'Pipe ' + port :
+        'Port ' + port;
+
+    // handle specific listen errors with friendly messages
+    switch (error.code) {
+        case 'EACCES':
+            console.error(bind + ' requires elevated privileges');
+            process.exit(1);
+            break;
+        case 'EADDRINUSE':
+            console.error(bind + ' is already in use');
+            process.exit(1);
+            break;
+        default:
+            throw error;
+    }
+}
+
+function onError(error) {
+    var port = 80;
+    if (error.syscall !== 'listen') {
+        throw error;
+    }
+
+    var bind = typeof port === 'string' ?
+        'Pipe ' + port :
+        'Port ' + port;
+
+    // handle specific listen errors with friendly messages
+    switch (error.code) {
+        case 'EACCES':
+            console.error(bind + ' requires elevated privileges');
+            process.exit(1);
+            break;
+        case 'EADDRINUSE':
+            console.error(bind + ' is already in use');
+            process.exit(1);
+            break;
+        default:
+            throw error;
+    }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListeningSSL() {
+    var port = 443;
+    var addr = serverSSL.address();
+    var bind = typeof addr === 'string' ?
+        'pipe ' + addr :
+        'port ' + addr.port;
+    debug('Listening on ' + bind);
+}
+
+function onListening() {
+    var port = 80;
+    var addr = server.address();
+    var bind = typeof addr === 'string' ?
+        'pipe ' + addr :
+        'port ' + addr.port;
+    debug('Listening on ' + bind);
+}

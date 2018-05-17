@@ -1,0 +1,23 @@
+extends layout
+
+block content
+    .row
+        .col-lg-8.offset-lg-2
+            .card.card-image.article
+                .card-body
+                    .row
+                        .col(style='padding:0px 20px;')
+                            h4 News
+                    .row
+                        .col.newsItem(style='padding:0px;')
+                                .card(style="border:0; background-color:transparent;")
+                                    .card-body
+                                        .row
+                                            .col-md-3.d-none.d-md-block
+                                                .d-flex.justify-content-center.align-items-center(style='height:100%;width:100%;')
+                                                    h3.text-center #{date}
+                                            .col-md-9.col-ms-12
+                                                h4 #{article.title}
+                                                h6.text-muted.mb-2 #{article.creator}
+                                                p !{article.content}
+block scripts

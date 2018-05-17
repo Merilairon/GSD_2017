@@ -1,0 +1,97 @@
+extends layout
+
+block head
+    script( src="/javascripts/fileinput.min.js" )
+    link( href="/stylesheets/fileinput.min.css" rel="stylesheet")
+
+block content
+    .row
+        .col-lg-8.offset-lg-2
+            .card.card-image.settings
+                .card-body
+                    h1.text-center Settings
+                    .row
+                        .offset-sm-1.col-sm-3.settings.well(id="leftSettings")
+                            h2.text-center Avatar
+                            a.thumbnail
+                                img(src=avatar, alt="", id="avatarImg").img-responsive
+                            div
+                                span.col-sm-12(style={'height':'20px'})
+                            .col-sm-4.offset-sm-3.form-group
+                                input.file-loading#avatarImageUpload(name="imgUpload", type="file")
+                                #errorBlock
+                        .col-sm-7.offset-sm-1.settings.well(id="rightSettings")
+                            form.form-horizontal.col-sm-offset-1.col-sm-10
+                                .form-group
+                                    legend Characters
+                                #charactersDesktop.d-none.d-md-block
+                                    .form-group
+                                        table.table
+                                            thead
+                                                tr
+                                                    th #
+                                                    th First Name
+                                                    th Main?
+                                                    th Delete?
+                                            tbody(id="charTablebody")
+                                                tr
+                                                    td
+                                                    td No Characters found
+                                                    td
+                                                    td
+                                    .form-group
+                                        label(for="addCharacter").control-label Add Character
+                                        div
+                                            input(type="text", name="addCharacter", id="addCharacter", placeholder="Ellony Ella").form-control
+                                    .form-group
+                                        .col-sm-8.offset-sm-4
+                                            button.btn.btn-primary(type="button", id="addCharacterButton") Add Character
+                                #charactersMobile.d-md-none
+                                    .form-group
+                                        p Character editing not available in mobile version
+                            form.form-horizontal.offset-sm-1.col-sm-10
+                                .form-group
+                                        legend Change Password
+                                .form-group
+                                    label(for="oldPassword").control-label Old Password
+                                    div
+                                        input(type="password", name="oldPassword", id="oldPassword", placeholder="********").form-control
+                                .form-group
+                                    label(for="newPassword").control-label New Password
+                                    div
+                                        input(type="password", name="newPassword", id="newPassword", placeholder="********").form-control
+                                .form-group
+                                    label(for="confirmPassword").control-label Confirm Password
+                                    div
+                                        input(type="password", name="confirmPassword", id="confirmPassword", placeholder="********").form-control
+                                .form-group
+                                    .col-sm-8.offset-sm-4
+                                        button.btn.btn-primary(type="button", id="changePass") Change Password
+                            form.form-horizontal.offset-sm-1.col-sm-10
+                                .form-group
+                                        legend Change Email
+                                .form-group
+                                    label(for="newEmail").control-label New Email
+                                    div
+                                        input(type="text", name="newEmail", id="newEmail", placeholder="new-test@test.be").form-control
+                                .form-group
+                                    label(for="confirmEmail").control-label Confirm Email
+                                    div
+                                        input(type="text", name="confirmEmail", id="confirmEmail", placeholder="new-test@test.be").form-control
+                                .form-group
+                                    .col-sm-8.offset-sm-4
+                                        button.btn.btn-primary(type="button", id="changeEmail") Change Email
+                            form.form-horizontal.offset-sm-1.col-sm-10
+                                .form-group
+                                        legend Change Steam
+                                .form-group
+                                    label(for="steam").control-label Steam Link
+                                    div
+                                        input(type="text", name="steam", id="steam").form-control
+                                .form-group
+                                    .col-sm-8.offset-sm-4
+                                        button.btn.btn-primary(type="button", id="changeSteam") Change Steam
+
+block scripts
+    script(src="./javascripts/settingsScript.js")
+    script(src="./javascripts/fileinput.min.js")

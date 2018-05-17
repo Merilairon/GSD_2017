@@ -1,0 +1,135 @@
+extends ../layout
+
+block head
+
+
+block content
+    .row
+        .col-lg-8.offset-lg-2
+            .card.card-image.comments
+                .card-body
+                    h2 Forum
+                    h4.text-center #{discussion}
+                    .row
+                        .col-sm-10.col-sm-1.col-md-8.offset-md-2(style="padding: 0 20px;")
+                            .pull-right
+                                    if admin
+                                        .card.removeDiscussion.text-center(style="width:40px;height:40px;padding: 10px;", id=id)
+                                                span.ion-trash-a(style="color:red;")
+                    .row
+                        ol.breadcrumb.col-xs-12.col-md-8.offset-md-2
+                            each val, index in breadcrumbs
+                                if index !== breadcrumbs.length - 1
+                                    li.breadcrumb-item
+                                        a(href=val[1]) #{val[0]}
+                                else
+                                    li.breadcrumb-item.active #{val[0]}
+                    each val, index in comments
+                        .col-sm-12.col-md-10.offset-md-1.comment(style="margin-top:20px;")
+                            .card
+                                h3.card-header.row
+                                    .col-sm-6.text-left
+                                        span#creator #{val.creator}
+                                    .col-sm-6.text-right.d-none.d-md-block
+                                        span.dateSent #{('00' + val.sentDate.getDate()).substr(-2) + "-" + ('00' + (val.sentDate.getMonth() + 1)).substr(-2) + "-" + val.sentDate.getFullYear() + " " + val.sentDate.toTimeString().substr(0, 8)}
+                                .card-body.row
+                                    .col-sm-3(style="border-right: 2px solid #ecf0f1").d-none.d-md-block
+                                        .col-sm-10.col-sm-offset-1
+                                            - var avatar = avatars[usernames.indexOf(val.creator)];
+                                            a.thumbnail
+                                                img.img-responsive(src=avatars[usernames.indexOf(val.creator)] style="max-width:100%; max-height:100%;")
+                                            .caption.text-center.text-muted
+                                                small Join Date: 
+                                                br
+                                                small #{joinDates[usernames.indexOf(val.creator)]}
+                                                br
+                                                small Last Seen:
+                                                br
+                                                small #{lastSeens[usernames.indexOf(val.creator)]}
+                                                if val.creator === username || admin
+                                                    br
+                                                    br
+                                                    button.btn.btn-success.editButton Edit
+                                    .col-md-9.col-sm-12(style="word-wrap: break-word;")
+                                        div.commentMessage !{val.comment}
+                                        if editDates[index] !== null
+                                            br
+                                            div.text-muted.editDate Last Edited: #{editDates[index]}
+                    .col-sm-8.offset-sm-2#editor(style="margin-top:20px;")
+                        #summernote
+                        btn.col-xs-8.offset-xs-2.col-sm-2.offset-sm-5.btn.btn-success#postComment Post Comment
+
+block scripts
+    link( href="//cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote-bs4.css" rel="stylesheet" )
+    script( src='//cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote-bs4.js' )
+    script( src="/javascripts/commentScript.js" )
+    script.
+        $(function () {
+            $('#summernote').summernote({
+                fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Constantia','Courier New', 'Helvetica', 'Impact', 'Tahoma', 'Times New Roman', 'Verdana', 'gw2_font'],
+                height: 300, // set editor height
+                minHeight: null, // set minimum height of editor
+                maxHeight: null, // set maximum height of editor
+                callbacks: {
+                    onImageUpload: function (files, editor, welEditable) {
+                        sendFile(files[0], editor, welEditable);
+                    },
+                    onChange: function (contents, $editable) {
+                        $(".note-editable p iframe").each(function (val) {
+                            $(this).addClass("embed-responsive-item").parent().addClass("embed-responsive embed-responsive-16by9");
+                        })
+                    }
+                }
+            });
+
+            $("#postComment").click(function (e) {
+                $.post('/postComment', {comment: $("#summernote").summernote('code')})
+                    .done(function () {
+                        setTimeout(window.location.replace(window.location.pathname), 500);
+                    })
+            });
+            $(window).scroll(function () {
+                if ($(window).scrollTop() >= 400 && $(window).height() + $(window).scrollTop() < $(document).height() - 400) {
+                    $("#goUp").show();
+                    $("#goDown").show();
+                } else if ($(window).height() + $(window).scrollTop() >= $(document).height() - 400) {
+                    $("#goUp").show();
+                    $("#goDown").hide();
+                } else {
+                    $("#goUp").hide();
+                    $("#goDown").show();
+                }
+            });
+            $("#goDown").click(function (e) {
+                $('html, body').animate({scrollTop: $(document).height()}, 500);
+            });
+            $("#goUp").click(function (e) {
+                $('html, body').animate({scrollTop: 0}, 500);
+            });
+        });
+        function sendFile(file, editor, welEditable) {
+            data = new FormData();
+            data.append("imgUpload", file);
+            console.log('image upload:', file, editor, welEditable);
+            console.log(data);
+            $.ajax({
+                data: data,
+                type: "POST",
+                url: "/upload",
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (url) {
+                    var image = $('<img>').attr('src', url.imageName).addClass("responsive-article-img");
+                    $('#summernote').summernote("insertNode", image[0]);
+                }
+            });
+        }
+    if admin
+        script.
+            $(function () {
+                $(".removeDiscussion").click(function (e) {
+                    $.post('/deleteDiscussion', {id: $(this).attr("id")});
+                    setTimeout(window.location.replace(window.location.pathname.substr(0, window.location.pathname.lastIndexOf("/"))), 1000);
+                })
+            });

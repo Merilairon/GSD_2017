@@ -1,0 +1,20 @@
+extend admin
+block head
+    script( src="/javascripts/adminUsers.js" )
+
+block content
+    .table-responsive
+        table.table(id="users")
+            thead
+                tr
+                    th(data-sort= "string") Username
+                    th(data-sort= "string") Display name
+                    th(data-sort= "string") Character name
+                    th(data-sort= "string") Gender
+                    th(data-sort= "string") Country
+                    th(data-sort= "string") Email
+                    th(data-sort= "string") Birthday
+                    th(data-sort= "string") Steam
+                    th(data-sort= "string") Rank
+                    th(data-sort= "string") Join Date
+            tbody

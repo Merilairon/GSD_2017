@@ -1,0 +1,50 @@
+extends layout
+
+block head
+    link(href="/stylesheets/Table-with-search.css", rel="stylesheet" )
+
+block content
+    .row
+        .col-lg-8.offset-lg-2
+            .card.community
+                .card-body
+                    .form-group
+                        input.search.form-control.col-md-4(type='text', placeholder='What you looking for?')
+                    span.counter.pull-right
+                    table.table.table-hover.table-bordered.results.table-responsive.sortable#users
+                        thead
+                            tr
+                                th(data-sort="string") DisplayName
+                                th(data-sort="string") Charactername
+                                th(data-sort="string") Gender
+                                th(data-sort="string") Country
+                                th(data-sort = "date") Birthday
+                                th(data-sort="string") Steam
+                                th(data-sort="string") Rank
+                                th(data-sort="datetime") Join Date
+                                th(data-sort="datetime") Last seen
+                            tr.warning.no-result
+                                td(colspan='9')
+                                    i.fa.fa-warning
+                                    |  No result
+                        tbody
+                            each val, index in users
+                                tr
+                                    td #{val.displayname}
+                                    td #{val.characterName}
+                                    td #{val.gender}
+                                    td #{val.country}
+                                    td #{birthdays[index]}
+                                    td
+                                        if (val.steam)
+                                            a(href="" + val.steam target="_blank") Go To Steam
+                                    if (val.rank > 0)
+                                        td Admin
+                                    else
+                                        td Member
+                                    td #{joinDates[index]}
+                                    td #{lastSeens[index]}
+block scripts
+    script(src="/javascripts/Table-with-search.js")
+    script(src="/javascripts/stupidtable.min.js")
+    script(src="/javascripts/communityScript.js")

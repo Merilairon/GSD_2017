@@ -1,0 +1,57 @@
+extends ../layout
+
+block content
+    .row
+        .col-lg-8.offset-lg-2
+            .card.card-image.discussions
+                .card-body
+                    h2 Forum
+                    h4.text-center #{subcategory}
+                    div
+                        ol.breadcrumb.col-xs-12
+                            each val, index in breadcrumbs
+                                if index !== breadcrumbs.length - 1
+                                    li.breadcrumb-item
+                                        a(href=val[1]) #{val[0]}
+                                else
+                                    li.breadcrumb-item.active #{val[0]}
+                    .row(style="padding: 0 16px;")
+                        .addDiscussionGroup
+                            input.form-control#discussionName(placeholder="Discussion Name" style=" border-radius: 4px 4px 4px 4px")
+                            btn.btn.btn-danger.ion-close-round#cancelButton(style="border-bottom: none; border-radius: 4px")
+                            btn.btn.btn-success.ion-checkmark-round#createDiscussion(disabled="disabled" style="border-bottom: none; border-radius: 4px")
+                    .list-group
+                        a.list-group-item.list-group-item-info.category-header Discussions
+                        each val, index in discussions
+                            a.list-group-item.subcategories-content(href="/forum/" + category + "/" + subcategory + "/" + val.id)
+                                h4.list-group-item-heading.row(style="padding: 0 20px;")
+                                    p(style="margin-bottom:0;") #{val.name}
+                                    p
+                                        if newComments[val.id]
+                                            span.ion-flag
+                                div.list-group-item-text.text-muted.row(style="padding: 0 20px;")
+                                    each valcom, indexcom in dates
+                                        if valcom.superDiscussionID === val.id
+                                            p.col-xs-6.col-md-2(style="margin-bottom:0;") #{valcom.creator}
+                                            p.col-xs-6.offset-md-8.col-md-2(style="margin-bottom:0;") #{valcom.sentDate}
+block scripts
+    script.
+        $(function () {
+            $("#discussionName").keyup(function (e) {
+                if ($(this).val().length <= 0) {
+                    $("#createDiscussion").attr("disabled", "disabled");
+                } else {
+                    $("#createDiscussion").removeAttr("disabled");
+                }
+            });
+            $("#cancelButton").click(function (e) {
+                $("#discussionName").val("");
+                $("#createDiscussion").attr("disabled", "disabled");
+            });
+            $("#createDiscussion").click(function (e) {
+                $.post('/createDiscussion', {name: $("#discussionName").val()})
+                    .done(function (data) {
+                        location.reload(true);
+                    });
+            });
+        });

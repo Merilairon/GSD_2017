@@ -1,0 +1,17 @@
+extend admin
+
+block head
+    link( href="//cdnjs.cloudflare.com/ajax/libs/summernote/0.8.4/summernote.css" rel="stylesheet" )
+    script( src='//cdnjs.cloudflare.com/ajax/libs/summernote/0.8.4/summernote.js' )
+    script( src="/javascripts/adminAboutUs.js" )
+
+block content
+    h1.text-center About Us
+    .row
+        .panel.panel-default
+            .panel-body
+                .col-md-12
+                    #editor
+                .col-md-12
+                    button.col-xs-8.col-xs-offset-2.col-sm-2.col-md-offset-2.btn.btn-success#saveAboutUs(type="button") Save Changes
+                    a.col-xs-8.col-xs-offset-2.col-sm-2.col-md-offset-4.btn.btn-danger(href="/admin/aboutUs") Revert Changes

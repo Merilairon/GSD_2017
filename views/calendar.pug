@@ -1,0 +1,20 @@
+extends layout
+
+block head
+    link(href='/stylesheets/calendar/fullcalendar.min.css', rel='stylesheet')
+
+block content
+    .row
+        .col-lg-8.offset-lg-2
+            .card.calendar
+                .card-body
+                    h1.text-center Calendar
+                    h3.text-center Countdown Guild Meeting
+                    h3#countdown.text-center
+                    div#calendar
+
+block scripts
+    script(src="/javascripts/calendar/moment.js")
+    script(src="/javascripts/calendar/fullcalendar.min.js")
+    script(src="/javascripts/calendar/gcal.min.js")
+    script(src="/javascripts/calendarScript.js")

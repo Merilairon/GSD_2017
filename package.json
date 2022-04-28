@@ -6,7 +6,7 @@
     "start": "forever ./bin/www"
   },
   "dependencies": {
-    "async": "^2.4.1",
+    "async": "^2.6.4",
     "bcrypt-nodejs": "0.0.3",
     "bluebird": "^3.5.0",
     "body-parser": "~1.17.1",

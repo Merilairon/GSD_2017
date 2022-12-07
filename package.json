@@ -15,7 +15,7 @@
     "cors": "^2.8.3",
     "debug": "~2.6.3",
     "del": "^2.2.2",
-    "express": "~4.15.2",
+    "express": "~4.17.3",
     "fullcalendar": "^3.4.0",
     "git": "^0.1.5",
     "gulp-rename": "^1.2.2",
